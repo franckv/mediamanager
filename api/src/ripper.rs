@@ -1,7 +1,6 @@
 pub mod dvd;
 pub mod mock;
 
-use std::fs;
 use std::io::{Error, ErrorKind, Result};
 
 use uuid::Uuid;
@@ -17,6 +16,7 @@ pub use mock::MockRipper;
 pub trait Ripper {
     fn read_label(&self, job: &Job) -> Result<String>;
     fn output(&self, job: &Job) -> Option<String>;
+    fn create_output(&self, job: &Job) -> Result<()>;
     fn rip(&self, job: &Job) -> Result<()>;
 
     fn process(&self, state: SharedState, job_id: Uuid) -> Result<()> {
@@ -35,12 +35,12 @@ pub trait Ripper {
         log::debug!("Get output [{}]", job_id);
         let output = self.output(&job).ok_or(Error::from(ErrorKind::NotFound))?;
 
-        log::debug!("Create output directory [{}]", job_id);
-        fs::create_dir_all(&output)?;
-
         log::debug!("Set output to {} [{}]", &output, job_id);
         job.output = Some(output);
         update_job(state.clone(), &job)?;
+
+        log::debug!("Create output directory [{}]", job_id);
+        self.create_output(&job)?;
 
         log::debug!("Start ripping [{}]", job_id);
         self.rip(&job)?;

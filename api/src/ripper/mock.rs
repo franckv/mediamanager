@@ -25,6 +25,12 @@ impl Ripper for MockRipper {
         Some("/tmp".to_string())
     }
 
+    fn create_output(&self, _: &Job) -> Result<()> {
+        log::debug!("create_output");
+
+        Ok(())
+    }
+
     fn rip(&self, _: &Job) -> Result<()> {
         log::debug!("rip");
 

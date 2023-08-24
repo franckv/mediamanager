@@ -33,6 +33,7 @@ pub struct RipperConfig {
 #[serde(default)]
 pub struct DvdRipperConfig {
     pub base_dir: String,
+    pub create_dir_cmd: String,
     pub rip_cmd: String,
     pub label_cmd: String,
 }

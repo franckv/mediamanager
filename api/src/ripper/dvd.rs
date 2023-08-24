@@ -9,6 +9,7 @@ use crate::Config;
 #[derive(Clone)]
 pub struct DvdRipper {
     base_dir: String,
+    create_dir_cmd: String,
     rip_cmd: String,
     label_cmd: String,
 }
@@ -17,6 +18,7 @@ impl DvdRipper {
     pub fn new(config: &Config) -> Self {
         DvdRipper {
             base_dir: config.ripper.dvd.base_dir.clone(),
+            create_dir_cmd: config.ripper.dvd.create_dir_cmd.clone(),
             rip_cmd: config.ripper.dvd.rip_cmd.clone(),
             label_cmd: config.ripper.dvd.label_cmd.clone(),
         }
@@ -45,6 +47,14 @@ impl Ripper for DvdRipper {
             log::debug!("No output");
             None
         }
+    }
+
+    fn create_output(&self, job: &Job) -> Result<()> {
+        log::debug!("create_output [{}]", job.id);
+
+        Command::run(&self.create_dir_cmd, job)?;
+
+        Ok(())
     }
 
     fn rip(&self, job: &Job) -> Result<()> {

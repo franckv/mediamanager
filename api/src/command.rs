@@ -11,7 +11,7 @@ pub struct Command;
 impl Command {
     pub fn run(cmd: &str, job: &Job) -> Result<String> {
         let command = &Self::process_params(cmd, job);
-        log::debug!("Run cmd {} [{}]", &command, job.id);
+        log::debug!("Run cmd: {} [{}]", &command, job.id);
 
         let output = process::Command::new("sh").args(["-c", command]).output()?;
 
