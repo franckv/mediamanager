@@ -1,0 +1,9 @@
+[package]
+name = "mediamanager-model"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+serde = { workspace = true }
+uuid = { workspace = true }

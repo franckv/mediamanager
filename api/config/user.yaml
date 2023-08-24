@@ -1,0 +1,8 @@
+network:
+  port: 8080
+
+ripper:
+  dvd:
+    base_dir: "/tmp"
+    rip_cmd: "makemkvcon --minlength=1800 --decrypt --noscan --directio=true mkv disc:%{idx} all %{output}"
+    label_cmd: "udevadm info %{device_f} -q property | sed -n 's/^ID_FS_LABEL=//p'""
