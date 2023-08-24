@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::io::{BufReader, BufRead, Result};
 use std::process;
 use std::str;
 
@@ -13,12 +13,35 @@ impl Command {
         let command = &Self::process_params(cmd, job);
         log::debug!("Run cmd: {} [{}]", &command, job.id);
 
-        let output = process::Command::new("sh").args(["-c", command]).output()?;
+        let mut output = process::Command::new("sh")
+            .args(["-c", command])
+            .stdout(process::Stdio::piped())
+            .stderr(process::Stdio::piped())
+            .spawn()?;
 
-        let stdout = str::from_utf8(&output.stdout).unwrap();
-        let stderr = str::from_utf8(&output.stderr).unwrap();
+        let mut stdout = Vec::new();
 
-        log::debug!("Cmd stout={}, stderr={}", stdout, stderr);
+        let stdout = {
+            let reader = BufReader::new(output.stdout.as_mut().unwrap());
+
+            for line in reader.lines() {
+                let line = line?;
+                log::debug!("Cmd stdout={} [{}]", &line, job.id);
+                stdout.push(line);
+            }
+
+            stdout.join("\n")
+        };
+
+        {
+            let reader = BufReader::new(output.stderr.as_mut().unwrap());
+
+            for line in reader.lines() {
+                log::debug!("Cmd stderr={} [{}]", &line?, job.id);
+            }
+        }
+
+        output.wait()?;
 
         Ok(stdout.into())
     }
