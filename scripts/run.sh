@@ -8,7 +8,7 @@ docker rm $NAME
 
 docker run -d \
     -p "8080:8080" \
-    -v "~/Videos/mediamanager:/var/lib/mediamanager" \
+    -v "${HOME}/Videos/mediamanager:/var/lib/mediamanager" \
     --device="/dev/sr0:/dev/sr0" \
     --privileged \
     --restart always \
