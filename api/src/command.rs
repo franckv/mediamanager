@@ -2,8 +2,6 @@ use std::io::{BufReader, BufRead, Result};
 use std::process;
 use std::str;
 
-use regex::Regex;
-
 use mediamanager_model::Job;
 
 pub struct Command;
@@ -47,20 +45,7 @@ impl Command {
     }
 
     fn process_params(cmd: &str, job: &Job) -> String {
-        let re = Regex::new(r"^sr([0-9])$").unwrap();
-
-        let idx = {
-            if let Some(cap) = re.captures(&job.device) {
-                cap[1].to_owned()
-            } else {
-                "0".to_owned()
-            }
-        };
-
-        log::debug!("idx={} [{}]", &idx, job.id);
-
         let cmd = cmd
-            .replace("%{idx}", &idx)
             .replace("%{device}", &job.device)
             .replace("%{device_f}", &format!("/dev/{}", &job.device));
 
