@@ -1,4 +1,4 @@
-use std::io::{BufReader, BufRead, Result};
+use std::io::{BufRead, BufReader, Result};
 use std::process;
 use std::str;
 

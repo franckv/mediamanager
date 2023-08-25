@@ -1,4 +1,3 @@
-use std::fs;
 use std::net::{IpAddr, SocketAddr};
 use std::sync::{Arc, RwLock};
 
@@ -23,9 +22,7 @@ async fn main() {
     )
     .expect("error");
 
-    let config = fs::read_to_string("/etc/mediamanager.conf").unwrap();
-
-    let config: Config = serde_yaml::from_str(&config).unwrap();
+    let config = Config::new();
 
     let app_state = Arc::new(RwLock::new(AppState::new(config)));
 

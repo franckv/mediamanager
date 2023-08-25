@@ -17,8 +17,8 @@ pub struct DvdRipper {
 impl DvdRipper {
     pub fn new(config: &Config) -> Self {
         DvdRipper {
-            base_dir: config.ripper.dvd.base_dir.clone(),
-            create_dir_cmd: config.ripper.dvd.create_dir_cmd.clone(),
+            base_dir: config.library.base_dir.clone(),
+            create_dir_cmd: config.library.create_dir_cmd.clone(),
             rip_cmd: config.ripper.dvd.rip_cmd.clone(),
             label_cmd: config.ripper.dvd.label_cmd.clone(),
         }

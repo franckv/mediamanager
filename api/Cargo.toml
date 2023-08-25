@@ -7,10 +7,10 @@ edition = { workspace = true }
 [dependencies]
 mediamanager-model = { workspace = true }
 axum = { workspace = true }
+figment = { workspace = true }
 log = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
-serde_yaml = { workspace = true }
 simplelog = { workspace = true }
 tokio = { workspace = true }
 uuid = { workspace = true }

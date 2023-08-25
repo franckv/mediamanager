@@ -13,14 +13,16 @@ RUN touch -a -m ./api/src/main.rs && touch -a -m ./model/src/lib.rs && cargo bui
 
 FROM debian:bullseye as base
 
-RUN apt update && apt install -y udev eject wget
-RUN wget https://apt.benthetechguy.net/benthetechguy-archive-keyring.gpg -O /usr/share/keyrings/benthetechguy-archive-keyring.gpg
+RUN apt update && apt install -y udev eject curl
+RUN curl https://apt.benthetechguy.net/benthetechguy-archive-keyring.gpg --output /usr/share/keyrings/benthetechguy-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/benthetechguy-archive-keyring.gpg] https://apt.benthetechguy.net/debian bullseye main contrib non-free" > /etc/apt/sources.list.d/benthetechguy.list
 RUN apt update && apt install -y makemkvcon
 
 FROM base
 
 COPY --from=builder /usr/local/build/target/release/mediamanager-api /bin/mediamanager-api
-COPY config/mediamanager.conf /etc/mediamanager.conf
+COPY config/default.conf /etc/mediamanager.conf
+COPY scripts/mediamanager /bin/mediamanager
+COPY scripts/udev/99-mediamanager.rules /etc/udev/rules.d/99-mediamanager.rules
 
 CMD ["/bin/mediamanager-api"]
