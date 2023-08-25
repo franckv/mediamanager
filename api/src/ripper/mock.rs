@@ -36,4 +36,10 @@ impl Ripper for MockRipper {
 
         Ok(())
     }
+
+    fn eject(&self, _: &Job) -> Result<()> {
+        log::debug!("eject");
+
+        Ok(())
+    }
 }

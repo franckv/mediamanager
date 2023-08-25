@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::io::{Error, ErrorKind, Result};
 
 use mediamanager_model::Job;
 
@@ -12,6 +12,7 @@ pub struct DvdRipper {
     create_dir_cmd: String,
     rip_cmd: String,
     label_cmd: String,
+    eject: bool,
 }
 
 impl DvdRipper {
@@ -21,6 +22,7 @@ impl DvdRipper {
             create_dir_cmd: config.library.create_dir_cmd.clone(),
             rip_cmd: config.ripper.dvd.rip_cmd.clone(),
             label_cmd: config.ripper.dvd.label_cmd.clone(),
+            eject: config.ripper.eject
         }
     }
 }
@@ -33,7 +35,11 @@ impl Ripper for DvdRipper {
 
         log::debug!("Label={} [{}]", &label, job.id);
 
-        Ok(label)
+        if label.is_empty() {
+            Err(Error::from(ErrorKind::NotFound))
+        } else {
+            Ok(label)
+        }
     }
 
     fn output(&self, job: &Job) -> Option<String> {
@@ -66,6 +72,14 @@ impl Ripper for DvdRipper {
         }
 
         log::debug!("done ripping [{}]", job.id);
+
+        Ok(())
+    }
+
+    fn eject(&self, job: &Job) -> Result<()> {
+        if self.eject {
+            Command::run("eject %{device_f}", &job)?;
+        }
 
         Ok(())
     }

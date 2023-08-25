@@ -9,6 +9,7 @@ mediamanager-model = { workspace = true }
 axum = { workspace = true }
 figment = { workspace = true }
 log = { workspace = true }
+nix = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
 simplelog = { workspace = true }

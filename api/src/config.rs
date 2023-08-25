@@ -21,13 +21,13 @@ impl Config {
         let user_config = format!("{}/.config/mediamanager.conf", var("HOME").unwrap());
 
         if Path::new(&user_config).exists() {
-            log::debug!("Load user config");
+            log::info!("Load user config");
             Config::load(&user_config)
         } else if Path::new(&system_config).exists() {
-            log::debug!("Load system config");
+            log::info!("Load system config");
             Config::load(&system_config)
         } else {
-            log::debug!("Load default config");
+            log::info!("Load default config");
             Config::default()
         }
     }
@@ -67,6 +67,7 @@ pub struct LibraryConfig {
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct RipperConfig {
+    pub eject: bool,
     pub dvd: DvdRipperConfig,
 }
 

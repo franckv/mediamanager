@@ -35,8 +35,8 @@ impl JobQueue {
     }
 
     pub fn clear(&mut self) {
-        log::debug!("Clear queue ({})", self.jobs.len());
+        log::info!("Clear queue ({})", self.jobs.len());
         self.jobs.retain(|j| j.status != JobStatus::Stopped);
-        log::debug!("Queue cleared ({})", self.jobs.len());
+        log::info!("Queue cleared ({})", self.jobs.len());
     }
 }
