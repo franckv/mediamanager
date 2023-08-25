@@ -22,12 +22,12 @@ async fn main() {
     )
     .expect("error");
 
-    let config = Config::new();
+    let config = Arc::new(Config::new());
 
-    let app_state = Arc::new(RwLock::new(AppState::new(config)));
+    let app_state = Arc::new(RwLock::new(AppState::new(config.clone())));
 
-    let addr = IpAddr::from(app_state.read().unwrap().config.network.address);
-    let port = app_state.read().unwrap().config.network.port;
+    let addr = IpAddr::from(config.network.address);
+    let port = config.network.port;
 
     println!("Listen on {}:{}", addr, port);
     let addr = SocketAddr::from((addr, port));

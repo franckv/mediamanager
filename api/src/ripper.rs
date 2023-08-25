@@ -5,6 +5,7 @@ use std::io::{Error, ErrorKind, Result};
 use std::os::fd::AsRawFd;
 use std::fs::OpenOptions;
 use std::os::unix::fs::OpenOptionsExt;
+use std::sync::Arc;
 
 use nix::ioctl_none_bad;
 
@@ -12,6 +13,8 @@ use uuid::Uuid;
 
 use mediamanager_model::{Job, JobStatus};
 
+use crate::Command;
+use crate::Config;
 use crate::SharedState;
 
 pub use dvd::DvdRipper;
@@ -29,11 +32,10 @@ pub enum DriveStatus {
 ioctl_none_bad!(cdrom_drive_status, 0x5326);
 
 pub trait Ripper {
+    fn config(&self) -> Arc<Config>;
     fn read_label(&self, job: &Job) -> Result<String>;
     fn output(&self, job: &Job) -> Option<String>;
-    fn create_output(&self, job: &Job) -> Result<()>;
     fn rip(&self, job: &Job) -> Result<()>;
-    fn eject(&self, job: &Job) -> Result<()>;
 
     fn process(&self, state: SharedState, job_id: Uuid) -> Result<()> {
         log::info!("Processing job [{}]", job_id);
@@ -46,7 +48,7 @@ pub trait Ripper {
         update_job(state.clone(), &job)?;
 
         log::debug!("Get drive status [{}]", job_id);
-        self.get_drive_status(&job);
+        self.get_drive_status(&job)?;
 
         log::debug!("Read label [{}]", job_id);
         let label = self.read_label(&job)?;
@@ -78,7 +80,15 @@ pub trait Ripper {
         Ok(())
     }
 
-    fn get_drive_status(&self, job: &Job) -> DriveStatus {
+    fn create_output(&self, job: &Job) -> Result<()> {
+        log::debug!("create_output [{}]", job.id);
+
+        Command::run(&self.config().ripper.create_dir_cmd, job)?;
+
+        Ok(())
+    }
+
+    fn get_drive_status(&self, job: &Job) -> Result<DriveStatus> {
         log::debug!("Reading device status {} [{}]", &job.device, job.id);
 
         let device = format!("/dev/{}", job.device);
@@ -86,7 +96,7 @@ pub trait Ripper {
         let fd = OpenOptions::new()
             .read(true)
             .custom_flags(nix::libc::O_NONBLOCK)
-            .open(&device).unwrap();
+            .open(&device)?;
 
         let res = unsafe { cdrom_drive_status(fd.as_raw_fd()).unwrap() };
 
@@ -101,7 +111,15 @@ pub trait Ripper {
 
         log::debug!("ioctl={}, status={:?} [{}]", res, status, job.id);
 
-        status
+        Ok(status)
+    }
+
+    fn eject(&self, job: &Job) -> Result<()> {
+        if self.config().ripper.eject {
+            Command::run("eject %{device_f}", &job)?;
+        }
+
+        Ok(())
     }
 }
 

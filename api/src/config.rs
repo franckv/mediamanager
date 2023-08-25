@@ -61,13 +61,13 @@ impl Default for NetworkConfig {
 #[serde(default)]
 pub struct LibraryConfig {
     pub base_dir: String,
-    pub create_dir_cmd: String,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct RipperConfig {
     pub eject: bool,
+    pub create_dir_cmd: String,
     pub dvd: DvdRipperConfig,
 }
 

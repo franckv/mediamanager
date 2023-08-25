@@ -1,4 +1,5 @@
 use std::io::Result;
+use std::sync::Arc;
 
 use crate::ripper::Ripper;
 use crate::Config;
@@ -6,15 +7,23 @@ use crate::Config;
 use mediamanager_model::Job;
 
 #[derive(Clone)]
-pub struct MockRipper {}
+pub struct MockRipper {
+    config: Arc<Config>
+}
 
 impl MockRipper {
-    pub fn new(_: &Config) -> Self {
-        MockRipper {}
+    pub fn new(config: Arc<Config>) -> Self {
+        MockRipper {
+            config
+        }
     }
 }
 
 impl Ripper for MockRipper {
+    fn config(&self) -> Arc<Config> {
+        self.config.clone()
+    }
+
     fn read_label(&self, _: &Job) -> Result<String> {
         log::debug!("read_label");
         Ok("mock".to_string())
@@ -25,20 +34,8 @@ impl Ripper for MockRipper {
         Some("/tmp".to_string())
     }
 
-    fn create_output(&self, _: &Job) -> Result<()> {
-        log::debug!("create_output");
-
-        Ok(())
-    }
-
     fn rip(&self, _: &Job) -> Result<()> {
         log::debug!("rip");
-
-        Ok(())
-    }
-
-    fn eject(&self, _: &Job) -> Result<()> {
-        log::debug!("eject");
 
         Ok(())
     }

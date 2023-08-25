@@ -47,8 +47,8 @@ pub async fn create_job(
         };
 
         tokio::task::spawn_blocking(move || {
-            if let Err(_) = ripper.process(state.clone(), job_id) {
-                log::error!("Ripping failed");
+            if let Err(err) = ripper.process(state.clone(), job_id) {
+                log::error!("Ripping failed: {} [{}]", err, job_id);
                 if let Some(job) = &mut state.write().unwrap().queue.get(job_id) {
                     job.status = JobStatus::Error;
                 }

@@ -7,16 +7,16 @@ use crate::JobQueue;
 pub type SharedState = Arc<RwLock<AppState>>;
 
 pub struct AppState {
-    pub config: Config,
+    pub config: Arc<Config>,
     pub queue: JobQueue,
     pub dvd_ripper: DvdRipper,
     pub mock_ripper: MockRipper,
 }
 
 impl AppState {
-    pub fn new(config: Config) -> Self {
-        let dvd_ripper = DvdRipper::new(&config);
-        let mock_ripper = MockRipper::new(&config);
+    pub fn new(config: Arc<Config>) -> Self {
+        let dvd_ripper = DvdRipper::new(config.clone());
+        let mock_ripper = MockRipper::new(config.clone());
 
         AppState {
             config,
