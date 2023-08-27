@@ -1,0 +1,10 @@
+[Unit]
+Description=Rip media
+DefaultDependencies=false
+StopWhenUnneeded=true
+
+[Service]
+User=franck
+Type=oneshot
+ExecStart=/bin/sh -c "echo -n %I | xargs -d'/' printf '%%s %%s' | xargs /usr/local/bin/mediamanager"
+

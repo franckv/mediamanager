@@ -1,0 +1,7 @@
+#! /bin/bash
+
+echo "Mediamanager: $1 $2" >> /tmp/mediamanager.log
+
+url="http://localhost:8080"
+
+curl --request POST $url/jobs --header "Content-Type: application/json" --data "{\"typ\":\"$1\", \"device\":\"$2\"}" >> /tmp/mediamanager.log 2>&1
