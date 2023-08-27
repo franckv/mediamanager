@@ -1,4 +1,4 @@
-FROM rust:latest as builder
+FROM rust:bookworm as builder
 
 WORKDIR /usr/local/build
 
@@ -11,7 +11,7 @@ RUN mkdir api/src && echo "fn main() {}" > ./api/src/main.rs && mkdir model/src 
 COPY . .
 RUN touch -a -m ./api/src/main.rs && touch -a -m ./model/src/lib.rs && cargo build --release
 
-FROM debian:bullseye as base
+FROM debian:bookworm as base
 
 RUN apt update && apt install -y udev eject curl libavcodec-extra libexpat1
 
