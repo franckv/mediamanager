@@ -2,7 +2,7 @@ FROM rust:bookworm as builder
 
 WORKDIR /usr/local/build
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 COPY api/Cargo.toml api/
 COPY model/Cargo.toml model/
 
