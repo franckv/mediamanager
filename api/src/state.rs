@@ -2,7 +2,8 @@ use std::sync::{Arc, RwLock};
 
 use crate::ripper::{DvdRipper, MockRipper};
 use crate::Config;
-use crate::JobQueue;
+
+use mediamanager_model::JobQueue;
 
 pub type SharedState = Arc<RwLock<AppState>>;
 

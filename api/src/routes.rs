@@ -1,9 +1,9 @@
-use axum::extract::State;
+use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::Json;
 use log;
 
-use mediamanager_model::{CreateJob, Job, JobStatus, JobType};
+use mediamanager_model::{CreateJob, QueryJob, Job, JobStatus, JobType};
 
 use crate::ripper::Ripper;
 use crate::SharedState;
@@ -14,10 +14,10 @@ pub async fn root() -> StatusCode {
     StatusCode::OK
 }
 
-pub async fn get_jobs(State(state): State<SharedState>) -> (StatusCode, Json<Vec<Job>>) {
+pub async fn get_jobs(Query(query): Query<QueryJob>, State(state): State<SharedState>) -> (StatusCode, Json<Vec<Job>>) {
     log::debug!("get_jobs");
 
-    let jobs = state.read().unwrap().queue.jobs.clone();
+    let jobs: Vec<Job> = state.read().unwrap().queue.query(query).collect();
 
     (StatusCode::CREATED, Json(jobs))
 }

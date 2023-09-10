@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum JobType {
     CD,
     DVD,
@@ -20,6 +20,14 @@ pub enum JobStatus {
 pub struct CreateJob {
     pub typ: JobType,
     pub device: String,
+}
+
+#[derive(Deserialize)]
+pub struct QueryJob {
+    pub id: Option<Uuid>,
+    pub status: Option<JobStatus>,
+    pub typ: Option<JobType>,
+    pub device: Option<String>
 }
 
 #[derive(Clone, Debug, Serialize)]

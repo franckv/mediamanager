@@ -1,7 +1,8 @@
 use uuid::Uuid;
 
-use mediamanager_model::{Job, JobStatus};
+use crate::{Job, JobStatus, QueryJob};
 
+#[derive(Debug)]
 pub struct JobQueue {
     pub jobs: Vec<Job>,
 }
@@ -34,9 +35,33 @@ impl JobQueue {
         (!exists, job)
     }
 
+    pub fn query(&self, query: QueryJob) -> impl Iterator<Item=Job> + '_ {
+        self.jobs.iter().cloned().filter(move |j| {
+            if let Some(typ) = query.typ {
+                if j.typ != typ {
+                    return false
+                }
+            }
+            if let Some(status) = query.status {
+                if j.status != status {
+                    return false
+                }
+            }
+            if let Some(id) = query.id {
+                if j.id != id {
+                    return false
+                }
+            }
+            if let Some(device) = &query.device {
+                if j.device != *device {
+                    return false
+                }
+            }
+            true
+        }).into_iter()
+    }
+
     pub fn clear(&mut self) {
-        log::info!("Clear queue ({})", self.jobs.len());
         self.jobs.retain(|j| j.status != JobStatus::Stopped);
-        log::info!("Queue cleared ({})", self.jobs.len());
     }
 }
