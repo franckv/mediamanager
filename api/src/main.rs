@@ -1,5 +1,5 @@
 use std::net::{IpAddr, SocketAddr};
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 
 use axum::routing::{get, post};
 use axum::Router;
@@ -24,7 +24,7 @@ async fn main() {
 
     let config = Arc::new(Config::new());
 
-    let app_state = Arc::new(RwLock::new(AppState::new(config.clone())));
+    let app_state = AppState::new(config.clone());
 
     let addr = IpAddr::from(config.network.address);
     let port = config.network.port;

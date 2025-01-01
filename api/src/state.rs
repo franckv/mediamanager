@@ -1,6 +1,6 @@
 use std::sync::{Arc, RwLock};
 
-use crate::ripper::{DvdRipper, MockRipper};
+use crate::ripper::{DvdRipper, MockRipper, Ripper};
 use crate::Config;
 
 use mediamanager_model::JobQueue;
@@ -10,20 +10,21 @@ pub type SharedState = Arc<RwLock<AppState>>;
 pub struct AppState {
     pub config: Arc<Config>,
     pub queue: JobQueue,
-    pub dvd_ripper: DvdRipper,
-    pub mock_ripper: MockRipper,
+    pub ripper: Arc<dyn Ripper>,
 }
 
 impl AppState {
-    pub fn new(config: Arc<Config>) -> Self {
-        let dvd_ripper = DvdRipper::new(config.clone());
-        let mock_ripper = MockRipper::new(config.clone());
+    pub fn new(config: Arc<Config>) -> SharedState {
+        let ripper = if config.ripper.mock {
+            MockRipper::new(config.clone())
+        } else {
+            DvdRipper::new(config.clone())
+        };
 
-        AppState {
+        Arc::new(RwLock::new(AppState {
             config,
             queue: JobQueue::new(),
-            dvd_ripper,
-            mock_ripper,
-        }
+            ripper,
+        }))
     }
 }

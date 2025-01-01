@@ -8,14 +8,12 @@ use mediamanager_model::Job;
 
 #[derive(Clone)]
 pub struct MockRipper {
-    config: Arc<Config>
+    config: Arc<Config>,
 }
 
 impl MockRipper {
-    pub fn new(config: Arc<Config>) -> Self {
-        MockRipper {
-            config
-        }
+    pub fn new(config: Arc<Config>) -> Arc<dyn Ripper> {
+        Arc::new(MockRipper { config })
     }
 }
 

@@ -23,7 +23,7 @@ fn test_find() {
     let job = queue.jobs[1].clone();
     let j = queue.find("/dev/sr1");
 
-    assert!(!j.is_none());
+    assert!(j.is_some());
     assert_eq!(job.id, j.unwrap().id);
 }
 
@@ -35,7 +35,7 @@ fn test_query() {
         id: Some(queue.jobs[0].id),
         status: None,
         typ: None,
-        device: None
+        device: None,
     };
     let v = queue.query(q);
     let _: Vec<Job> = v.inspect(|j| assert_eq!(queue.jobs[0].id, j.id)).collect();
@@ -44,7 +44,7 @@ fn test_query() {
         id: None,
         status: Some(JobStatus::Running),
         typ: None,
-        device: None
+        device: None,
     };
     let v: Vec<Job> = queue.query(q).collect();
     assert_eq!(1, v.len());
@@ -54,7 +54,7 @@ fn test_query() {
         id: None,
         status: None,
         typ: Some(JobType::CD),
-        device: None
+        device: None,
     };
     let v: Vec<Job> = queue.query(q).collect();
     assert_eq!(1, v.len());
@@ -64,7 +64,7 @@ fn test_query() {
         id: None,
         status: None,
         typ: Some(JobType::DVD),
-        device: None
+        device: None,
     };
     let v: Vec<Job> = queue.query(q).collect();
     assert_eq!(2, v.len());
@@ -73,7 +73,7 @@ fn test_query() {
         id: None,
         status: None,
         typ: None,
-        device: Some("/dev/sr0".to_owned())
+        device: Some("/dev/sr0".to_owned()),
     };
     let v: Vec<Job> = queue.query(q).collect();
     assert_eq!(1, v.len());
@@ -83,7 +83,7 @@ fn test_query() {
         id: None,
         status: Some(JobStatus::Created),
         typ: Some(JobType::DVD),
-        device: None
+        device: None,
     };
     let v: Vec<Job> = queue.query(q).collect();
     assert_eq!(1, v.len());
@@ -93,7 +93,7 @@ fn test_query() {
         id: None,
         status: Some(JobStatus::Running),
         typ: Some(JobType::CD),
-        device: None
+        device: None,
     };
     let v: Vec<Job> = queue.query(q).collect();
     assert_eq!(0, v.len());

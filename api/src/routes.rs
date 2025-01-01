@@ -3,9 +3,8 @@ use axum::http::StatusCode;
 use axum::Json;
 use log;
 
-use mediamanager_model::{CreateJob, QueryJob, Job, JobStatus, JobType};
+use mediamanager_model::{CreateJob, Job, JobStatus, QueryJob};
 
-use crate::ripper::Ripper;
 use crate::SharedState;
 
 pub async fn root() -> StatusCode {
@@ -14,7 +13,10 @@ pub async fn root() -> StatusCode {
     StatusCode::OK
 }
 
-pub async fn get_jobs(Query(query): Query<QueryJob>, State(state): State<SharedState>) -> (StatusCode, Json<Vec<Job>>) {
+pub async fn get_jobs(
+    Query(query): Query<QueryJob>,
+    State(state): State<SharedState>,
+) -> (StatusCode, Json<Vec<Job>>) {
     log::debug!("get_jobs");
 
     let jobs: Vec<Job> = state.read().unwrap().queue.query(query).collect();
@@ -41,10 +43,7 @@ pub async fn create_job(
         log::debug!("Job created: {:?}", job);
 
         let job_id = job.id;
-        let ripper = match job.typ {
-            JobType::DVD => state.read().unwrap().dvd_ripper.clone(),
-            _ => state.read().unwrap().dvd_ripper.clone(),
-        };
+        let ripper = state.read().unwrap().ripper.clone();
 
         tokio::task::spawn_blocking(move || {
             if let Err(err) = ripper.process(state.clone(), job_id) {

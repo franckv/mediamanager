@@ -31,7 +31,7 @@ pub enum DriveStatus {
 
 ioctl_none_bad!(cdrom_drive_status, 0x5326);
 
-pub trait Ripper {
+pub trait Ripper: Send + Sync {
     fn config(&self) -> Arc<Config>;
     fn read_label(&self, job: &Job) -> Result<String>;
     fn output(&self, job: &Job) -> Option<String>;

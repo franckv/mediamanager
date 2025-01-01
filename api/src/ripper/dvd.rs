@@ -9,14 +9,12 @@ use crate::Config;
 
 #[derive(Clone)]
 pub struct DvdRipper {
-    config: Arc<Config>
+    config: Arc<Config>,
 }
 
 impl DvdRipper {
-    pub fn new(config: Arc<Config>) -> Self {
-        DvdRipper {
-            config
-        }
+    pub fn new(config: Arc<Config>) -> Arc<dyn Ripper> {
+        Arc::new(DvdRipper { config })
     }
 }
 

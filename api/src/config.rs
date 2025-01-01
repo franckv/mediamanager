@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 const DEFAULT_CONFIG: &str = include_str!("../../config/default.conf");
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Config {
     pub network: NetworkConfig,
@@ -41,7 +41,7 @@ impl Config {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct NetworkConfig {
     pub address: [u8; 4],
@@ -57,21 +57,22 @@ impl Default for NetworkConfig {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct LibraryConfig {
     pub base_dir: String,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct RipperConfig {
     pub eject: bool,
+    pub mock: bool,
     pub create_dir_cmd: String,
     pub dvd: DvdRipperConfig,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct DvdRipperConfig {
     pub rip_cmd: String,
