@@ -37,10 +37,11 @@ async fn main() {
         .route("/jobs", get(routes::get_jobs))
         .route("/jobs", post(routes::create_job))
         .route("/clear", get(routes::clear_jobs))
+        //.route("/disks/:id", get(routes::get_disk))
         .with_state(app_state);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
 }
