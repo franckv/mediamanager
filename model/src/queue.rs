@@ -65,3 +65,9 @@ impl JobQueue {
         self.jobs.retain(|j| j.status != JobStatus::Stopped);
     }
 }
+
+impl Default for JobQueue {
+    fn default() -> Self {
+        Self::new()
+    }
+}

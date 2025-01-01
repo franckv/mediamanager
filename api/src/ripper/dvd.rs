@@ -35,6 +35,9 @@ impl Ripper for DvdRipper {
         if label.is_empty() {
             Err(Error::from(ErrorKind::NotFound))
         } else {
+            // Invalid labels:
+            // - UNDEFINED
+
             Ok(label)
         }
     }

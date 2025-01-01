@@ -71,3 +71,9 @@ pub async fn clear_jobs(State(state): State<SharedState>) -> StatusCode {
 
     StatusCode::OK
 }
+
+/*
+pub async fn get_disk(State(state): State<SharedState>, Path(id): Path<String>) -> StatusCode {
+    StatusCode::OK
+}
+*/

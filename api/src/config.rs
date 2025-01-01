@@ -25,7 +25,7 @@ impl Config {
             Config::load(&user_config)
         } else if Path::new(&system_config).exists() {
             log::info!("Load system config");
-            Config::load(&system_config)
+            Config::load(system_config)
         } else {
             log::info!("Load default config");
             Config::default()

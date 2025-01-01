@@ -41,7 +41,7 @@ impl Command {
 
         output.wait()?;
 
-        Ok(stdout.into())
+        Ok(stdout)
     }
 
     fn process_params(cmd: &str, job: &Job) -> String {

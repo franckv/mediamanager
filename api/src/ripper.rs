@@ -1,9 +1,9 @@
 pub mod dvd;
 pub mod mock;
 
+use std::fs::OpenOptions;
 use std::io::{Error, ErrorKind, Result};
 use std::os::fd::AsRawFd;
-use std::fs::OpenOptions;
 use std::os::unix::fs::OpenOptionsExt;
 use std::sync::Arc;
 
@@ -26,7 +26,7 @@ pub enum DriveStatus {
     Empty,
     Open,
     NotReady,
-    Ready
+    Ready,
 }
 
 ioctl_none_bad!(cdrom_drive_status, 0x5326);
@@ -106,7 +106,7 @@ pub trait Ripper {
             2 => DriveStatus::Open,
             3 => DriveStatus::NotReady,
             4 => DriveStatus::Ready,
-            _ => DriveStatus::None
+            _ => DriveStatus::None,
         };
 
         log::debug!("ioctl={}, status={:?} [{}]", res, status, job.id);
@@ -116,7 +116,7 @@ pub trait Ripper {
 
     fn eject(&self, job: &Job) -> Result<()> {
         if self.config().ripper.eject {
-            Command::run("eject %{device_f}", &job)?;
+            Command::run("eject %{device_f}", job)?;
         }
 
         Ok(())
@@ -125,11 +125,7 @@ pub trait Ripper {
 
 fn get_job(state: SharedState, job_id: Uuid) -> Option<Job> {
     let queue = &mut state.write().unwrap().queue;
-    if let Some(job) = queue.get(job_id) {
-        Some(job.clone())
-    } else {
-        None
-    }
+    queue.get(job_id).map(|job| job.clone())
 }
 
 fn update_job(state: SharedState, update: &Job) -> Result<()> {
